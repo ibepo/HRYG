@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">新动利</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="login_id">支持用户名/已验证手机</string>
+    <string name="login_pwd">请输入密码</string>
+    <string name="title_activity_base">BaseActivity</string>
+</resources>

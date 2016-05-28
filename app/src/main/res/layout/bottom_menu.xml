@@ -1,0 +1,74 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <me.next.slidebottompanel.SlideBottomPanel
+        android:id="@+id/sbv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:sbp_background_layout="@layout/goods_web_fragemnt"
+        app:sbp_hide_panel_title="true"
+        app:sbp_panel_height="250dp"
+        app:sbp_title_height_no_display="50dp">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <include layout="@layout/good_chose_ite"></include>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/zircon">
+
+
+                <LinearLayout
+                    android:id="@+id/linBuy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:background="@color/radical_red"
+                        android:gravity="center"
+                        android:text="加入购物车"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:background="@color/tree_poppy"
+                        android:gravity="center"
+                        android:text="立即购买"
+                        android:textColor="@color/white" />
+
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </FrameLayout>
+
+    </me.next.slidebottompanel.SlideBottomPanel>
+
+</LinearLayout>

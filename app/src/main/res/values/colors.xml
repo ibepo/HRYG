@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="lily_white">#EBEBEB</color>
+    <color name="solitude">#EAEDF1</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="white">#FFFFFF</color>
+    <color name="light_sky_blue">#80D9FC</color>
+    <color name="mountain_mist">#939393</color>
+    <color name="login_white">#EDEDED</color>
+    <color name="mercury">#E6E6E6</color>
+    <color name="pink_swan">#BCB7B7</color>
+    <color name="dove_gray">#737373</color>
+    <color name="gallery">#F0F0F0</color>
+    <color name="bunker">#141414</color>
+    <color name="picton_blue">#51ABEB</color>
+    <color name="red_orange">#FC4B4E</color>
+    <color name="rouge">#AA406E</color>
+    <color name="anti_flash_white">#F3F4F6</color>
+    <color name="radical_red">#F54072</color>
+    <color name="tree_poppy">#F59D12</color>
+    <color name="zircon">#F3F5FF</color>
+    <color name="carmine_pink">#F54A44</color>
+    <color name="desert_storm">#F8F8F8</color>
+</resources>
