@@ -19,7 +19,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="15dp"
-            android:text="用户名"
+            android:text="商家名"
             android:textColor="@color/dove_gray"
             android:textSize="17sp" />
 

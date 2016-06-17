@@ -1,19 +1,19 @@
-// (c)2016 Flipboard Inc, All Rights Reserved.
-
 package com.hryg.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.hryg.model.IdListBean;
+import com.hryg.model.PeiIdListBean;
 import com.hryg.ui.mine.IDGroupList;
 import com.kefanbufan.fengtimo.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -21,37 +21,54 @@ import butterknife.ButterKnife;
 
 public class GroupAdapter extends RecyclerView.Adapter {
 
-    List<IdListBean.DataBean> list;
+    List<PeiIdListBean.DataBean> list;
     static Context context;
+    List<Integer> checkdedList = new ArrayList<>();
+    List<String> idList = new ArrayList<>();
 
 
     @Override
-
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.downline_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_item, parent, false);
         return new DebounceViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        DebounceViewHolder viewHolder = (DebounceViewHolder) holder;
-        viewHolder.tvName.setText(list.get(position).getUser_name());
+        final DebounceViewHolder viewHolder = (DebounceViewHolder) holder;
+        viewHolder.tvName.setText(list.get(position).getName());
 
-        if (list.get(position).getPhone_tel() == null) {
-            viewHolder.tvPhone.setText("");
+
+        if (checkdedList != null) {
+            viewHolder.cbID.setChecked(checkdedList.contains(new Integer(position)) ? true : false);
         } else {
-            viewHolder.tvPhone.setText(list.get(position).getPhone_tel().toString());
+            viewHolder.cbID.setChecked(false);
         }
 
-        viewHolder.tvAction.setOnClickListener(new View.OnClickListener() {
+
+        viewHolder.cbID.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent13 = new Intent(context, IDGroupList.class);
-                intent13.putExtra("pei_id", list.get(position).getUserId());
-                context.startActivity(intent13);
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+
+
+                if (isChecked) {
+                    if (!checkdedList.contains(viewHolder.cbID.getTag())) {
+                        checkdedList.add(new Integer(position));
+                        idList.remove(new Integer(position));
+                    }
+                } else {
+                    if (checkdedList.contains(viewHolder.cbID.getTag())) {
+                        checkdedList.remove(new Integer(position));
+                        idList.add(new Integer(position), list.get(position).getId());
+
+                    }
+                }
+
+                IDGroupList.IDList = idList;
 
             }
         });
+
 
     }
 
@@ -60,7 +77,7 @@ public class GroupAdapter extends RecyclerView.Adapter {
         return list == null ? 0 : list.size();
     }
 
-    public void setImages(List<IdListBean.DataBean> list, Context context) {
+    public void setImages(List<PeiIdListBean.DataBean> list, Context context) {
         this.context = context;
         this.list = list;
         notifyDataSetChanged();
@@ -70,15 +87,12 @@ public class GroupAdapter extends RecyclerView.Adapter {
 
         @Bind(R.id.tvName)
         TextView tvName;
-        @Bind(R.id.tvPhone)
-        TextView tvPhone;
-        @Bind(R.id.tvAction)
-        TextView tvAction;
+        @Bind(R.id.cbID)
+        CheckBox cbID;
 
         public DebounceViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-
 
         }
     }

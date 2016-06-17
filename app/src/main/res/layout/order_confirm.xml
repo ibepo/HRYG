@@ -52,18 +52,16 @@
                         android:id="@+id/tvName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="名字"
                         android:textColor="@color/bunker"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/tvPhone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
-                        android:text="名字"
                         android:textColor="@color/bunker"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 
@@ -71,10 +69,9 @@
                     android:id="@+id/tvAddress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="名字"
+                    android:layout_marginTop="10dp"
                     android:textColor="@color/dove_gray"
-                    android:textSize="16sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <ImageView
@@ -136,7 +133,6 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"
                 android:layout_toLeftOf="@id/ivArrwow"
-                android:text="共2件"
                 android:textColor="@color/dove_gray"
                 android:textSize="16sp" />
 
@@ -322,7 +318,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="40dp"
                 android:layout_toLeftOf="@id/tvXiadan"
-                android:text="合计: ¥67.90"
+                android:text="合计: "
                 android:textColor="@color/red_orange"
                 android:textSize="16sp" />
 

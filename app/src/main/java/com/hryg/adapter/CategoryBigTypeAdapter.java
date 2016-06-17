@@ -85,6 +85,7 @@ public class CategoryBigTypeAdapter extends RecyclerView.Adapter {
     public void setData(List<Category.DataBean> list, Context context) {
         this.context = context;
         this.list = list;
+        checkdedList.clear();
         checkdedList.add(0);
         notifyDataSetChanged();
     }

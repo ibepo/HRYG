@@ -79,6 +79,12 @@ public class AddressList extends BaseActivity {
 
     };
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getData();
+
+    }
 
     @OnClick(R.id.tvAdd)
     public void onClick() {

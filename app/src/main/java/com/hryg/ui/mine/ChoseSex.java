@@ -2,78 +2,90 @@ package com.hryg.ui.mine;
 
 
 import android.os.Bundle;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.hryg.base.BaseActivity;
-import com.hryg.base.PathConfig;
-import com.hryg.base.ToastUtils;
-import com.hryg.model.ResultBean4Rep;
-import com.hryg.network.Network;
+import com.hryg.model.MessageEvent;
 import com.kefanbufan.fengtimo.R;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class ChoseSex extends BaseActivity {
 
 
-    @Bind(R.id.tvApply)
-    TextView tvApply;
+    @Bind(R.id.ivMan)
+    ImageView ivMan;
+    @Bind(R.id.rlMan)
+    RelativeLayout rlMan;
+    @Bind(R.id.ivWomen)
+    ImageView ivWomen;
+    @Bind(R.id.rlWomen)
+    RelativeLayout rlWomen;
+    @Bind(R.id.ivSecrect)
+    ImageView ivSecrect;
+    @Bind(R.id.rlSecrect)
+    RelativeLayout rlSecrect;
+
+
+    int flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.apply_business);
+        setContentView(R.layout.chose_sex);
         ButterKnife.bind(this);
-        getTopBar("申请商家");
+        getTopBar("选择性别");
+
+
+        flag = Integer.parseInt(getIntent().getExtras().get("flag").toString());
+        reset();
+
+        switch (flag) {
+
+            case 0:
+                ivSecrect.setVisibility(View.VISIBLE);
+                break;
+            case 1:
+                ivMan.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                ivWomen.setVisibility(View.VISIBLE);
+                break;
+
+        }
+
 
     }
 
 
-    public void apply() {
-
-        showDialog();
-        Map<String, Object> map = new HashMap<>();
-        map.put("user_id", PathConfig.user_id);
-        Network.getMineApi().applyBusiness(map).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer2);
+    void reset() {
+        ivMan.setVisibility(View.GONE);
+        ivWomen.setVisibility(View.GONE);
+        ivSecrect.setVisibility(View.GONE);
     }
 
 
-    Observer<ResultBean4Rep> observer2 = new Observer<ResultBean4Rep>() {
-        @Override
-        public void onCompleted() {
-
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            dimissDialog();
-            ToastUtils.showSuperToastAlert(getApplicationContext(), "连接服务器失败");
-        }
-
-        @Override
-        public void onNext(ResultBean4Rep data) {
-            dimissDialog();
-            ToastUtils.showSuperToastAlertGreen(getApplicationContext(), data.getDescription());
-            if (data.getCode() == 1) {
+    @OnClick({R.id.rlMan, R.id.rlWomen, R.id.rlSecrect})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.rlMan:
+                EventBus.getDefault().post(new MessageEvent("1"));
                 finish();
-            }
+                break;
+            case R.id.rlWomen:
+                EventBus.getDefault().post(new MessageEvent("2"));
+                finish();
+                break;
+            case R.id.rlSecrect:
+                EventBus.getDefault().post(new MessageEvent("0"));
+                finish();
+                break;
         }
-
-    };
-
-
-    @OnClick(R.id.tvApply)
-    public void onClick() {
-        apply();
     }
 }

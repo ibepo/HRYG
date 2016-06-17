@@ -6,37 +6,23 @@
     android:background="@color/desert_storm">
 
 
+    <CheckBox
+        android:id="@+id/cbID"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp" />
+
+
     <TextView
         android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="15dp"
-        android:text="冷色调"
-        android:textColor="@color/dove_gray"
-        android:textSize="17sp" />
-
-    <TextView
-        android:id="@+id/tvPhone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_marginLeft="20dp"
-        android:text="15176252635"
+        android:text="红包组"
         android:textColor="@color/dove_gray"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/tvAction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="15dp"
-        android:background="@drawable/border_mima"
-        android:text="分配ID"
-        android:textColor="@color/dove_gray"
-        android:textSize="14sp" />
 
 </RelativeLayout>

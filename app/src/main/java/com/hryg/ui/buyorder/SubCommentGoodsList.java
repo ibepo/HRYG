@@ -3,22 +3,19 @@ package com.hryg.ui.buyorder;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.hryg.adapter.BuyOrderListAdapter;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.hryg.adapter.CommetGoodsListAdapter;
 import com.hryg.base.BaseActivity;
-import com.hryg.base.PathConfig;
-import com.hryg.base.ToastUtils;
 import com.hryg.model.BuyOrderListData;
-import com.hryg.network.Network;
 import com.kefanbufan.fengtimo.R;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class SubCommentGoodsList extends BaseActivity {
 
@@ -26,8 +23,13 @@ public class SubCommentGoodsList extends BaseActivity {
     @Bind(R.id.gridRv)
     RecyclerView gridRv;
 
+    CommetGoodsListAdapter adapter = new CommetGoodsListAdapter();
 
-    BuyOrderListAdapter adapter = new BuyOrderListAdapter();
+    List<BuyOrderListData.DataBean> list;
+
+    public static String order_id;
+
+
     @Bind(R.id.rlNodata)
     RelativeLayout rlNodata;
 
@@ -36,7 +38,7 @@ public class SubCommentGoodsList extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.order_list);
         ButterKnife.bind(this);
-        getTopBar("待评价");
+        getTopBar("商品评价列表");
 
         gridRv.setAdapter(adapter);
         gridRv.setLayoutManager(new LinearLayoutManager(SubCommentGoodsList.this));
@@ -46,38 +48,18 @@ public class SubCommentGoodsList extends BaseActivity {
 
 
     public void getData() {
-        showDialog();
-        Network.getOrderApi().getCommentOrder(PathConfig.user_id, "40", "1", "0")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
+
+        //订单 id
+        order_id = getIntent().getExtras().get("order_id").toString();
+
+        //订单里的商品列表
+        Gson gson = new Gson();
+        list = gson.fromJson(getIntent().getExtras().get("data").toString(),
+                new TypeToken<List<BuyOrderListData.DataBean>>() {
+                }.getType());
+
+        adapter.setImages(list, SubCommentGoodsList.this);
     }
-
-
-    Observer<BuyOrderListData> observer = new Observer<BuyOrderListData>() {
-        @Override
-        public void onCompleted() {
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            dimissDialog();
-            ToastUtils.showSuperToastAlertGreen(getApplicationContext(), "连接服务器失败");
-        }
-
-        @Override
-        public void onNext(BuyOrderListData data) {
-            dimissDialog();
-            adapter.setImages(data.getData(), SubCommentGoodsList.this);
-            if (data.getData() == null) {
-                rlNodata.setVisibility(View.VISIBLE);
-            } else {
-                rlNodata.setVisibility(View.GONE);
-            }
-
-        }
-
-    };
 
 
 }

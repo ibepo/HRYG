@@ -1,56 +1,135 @@
 package com.hryg.ui.buyorder;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.hryg.adapter.BuyOrderListAdapter;
+import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.hryg.base.BaseActivity;
 import com.hryg.base.PathConfig;
 import com.hryg.base.ToastUtils;
-import com.hryg.model.BuyOrderListData;
+import com.hryg.model.CommentInfo;
+import com.hryg.model.ResultBean4Rep;
 import com.hryg.network.Network;
+import com.jakewharton.rxbinding.view.RxView;
+import com.jakewharton.rxbinding.widget.RxTextView;
 import com.kefanbufan.fengtimo.R;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 public class SubmitComment extends BaseActivity {
 
 
-    @Bind(R.id.gridRv)
-    RecyclerView gridRv;
+    @Bind(R.id.ivGoods)
+    ImageView ivGoods;
+    @Bind(R.id.tvNum)
+    TextView tvNum;
+    @Bind(R.id.tvGold)
+    TextView tvGold;
+    @Bind(R.id.tv_goods_name)
+    TextView tvGoodsName;
+    @Bind(R.id.etComment)
+    EditText etComment;
+    @Bind(R.id.imageView3)
+    ImageView imageView3;
+    @Bind(R.id.tvSubmit)
+    TextView tvSubmit;
+    @Bind(R.id.radioButton1)
+    ImageView radioButton1;
+    @Bind(R.id.radioButton2)
+    ImageView radioButton2;
+    @Bind(R.id.radioButton3)
+    ImageView radioButton3;
 
-
-    BuyOrderListAdapter adapter = new BuyOrderListAdapter();
+    String user_id, order_id, rec_id, evaluation, comment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.order_list);
+        setContentView(R.layout.submit_assess);
         ButterKnife.bind(this);
-        getTopBar("全部订单");
+        getTopBar("发表评论");
+        evaluation = "3";
+        user_id = PathConfig.user_id;
+        order_id = getIntent().getExtras().get("order_id").toString();
+//        order_id = "22437";
 
-        gridRv.setAdapter(adapter);
-        gridRv.setLayoutManager(new LinearLayoutManager(SubmitComment.this));
+        RxView.clicks(radioButton1).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                resetRB();
+                radioButton1.setBackground(getResources().getDrawable(R.drawable.gc_p));
+                evaluation = "3";
+            }
+        });
+
+        RxView.clicks(radioButton2).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                resetRB();
+                radioButton2.setBackground(getResources().getDrawable(R.drawable.mc_p));
+                evaluation = "2";
+            }
+        });
+
+        RxView.clicks(radioButton3).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                resetRB();
+                radioButton3.setBackground(getResources().getDrawable(R.drawable.bc_p));
+                evaluation = "1";
+            }
+        });
+
+        RxTextView.textChanges(etComment).subscribe(new Action1<CharSequence>() {
+            @Override
+            public void call(CharSequence charSequence) {
+                comment = charSequence.toString();
+            }
+        });
+        RxView.clicks(tvSubmit).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                submitComment();
+
+            }
+        });
+
+
         getData();
+    }
+
+
+    public void resetRB() {
+        radioButton1.setBackground(getResources().getDrawable(R.drawable.gc_n));
+        radioButton2.setBackground(getResources().getDrawable(R.drawable.gc_n));
+        radioButton3.setBackground(getResources().getDrawable(R.drawable.mc_n));
 
     }
 
 
     public void getData() {
         showDialog();
-        Network.getOrderApi().getAllOrder(PathConfig.user_id, null, "1")
-                .subscribeOn(Schedulers.io())
+        Network.getOrderApi().getCommentInfo(user_id, order_id).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
+
+
     }
 
 
-    Observer<BuyOrderListData> observer = new Observer<BuyOrderListData>() {
+    Observer<CommentInfo> observer = new Observer<CommentInfo>() {
         @Override
         public void onCompleted() {
         }
@@ -62,10 +141,68 @@ public class SubmitComment extends BaseActivity {
         }
 
         @Override
-        public void onNext(BuyOrderListData data) {
+        public void onNext(CommentInfo data) {
             dimissDialog();
-            adapter.setImages(data.getData(), SubmitComment.this);
+            if (data.getGoods().size() > 1) {
+                Gson gson = new Gson();
+                String josn = gson.toJson(data.getGoods());
+                Intent intent2 = new Intent(SubmitComment.this, SubCommentGoodsList.class);
+                intent2.putExtra("data", josn);
+                intent2.putExtra("order_id", order_id);
+                SubmitComment.this.startActivity(intent2);
+                finish();
+            }
 
+
+            tvGoodsName.setText(data.getGoods().get(0).getGoods_name());
+            tvNum.setText("数量: " + data.getGoods().get(0).getQuantity());
+            tvGold.setText("¥" + data.getGoods().get(0).getGold());
+            Glide.with(SubmitComment.this).load(data.getGoods().get(0).getGoods_image()).into(ivGoods);
+            rec_id = data.getGoods().get(0).getRec_id();
+
+        }
+
+    };
+
+
+    public void submitComment() {
+
+
+        if (comment.contains("\"\"") || comment.contains("\'\'")) {
+            ToastUtils.showSuperToastAlert(getApplicationContext(), "评论中不能包含双引号或者单引号!");
+            return;
+        }
+
+        showDialog();
+        Map<String, Object> map = new HashMap<>();
+        map.put("user_id", PathConfig.user_id);
+        map.put("order_id", order_id);
+        map.put("rec_id", rec_id);
+        map.put("evaluation", evaluation);
+        map.put("comment", comment);
+        Network.getOrderApi().submitComment(map).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer2);
+    }
+
+
+    Observer<ResultBean4Rep> observer2 = new Observer<ResultBean4Rep>() {
+        @Override
+        public void onCompleted() {
+
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            dimissDialog();
+            ToastUtils.showSuperToastAlert(getApplicationContext(), "连接服务器失败");
+        }
+
+        @Override
+        public void onNext(ResultBean4Rep data) {
+            dimissDialog();
+            ToastUtils.showSuperToastAlertGreen(getApplicationContext(), data.getDescription());
+            finish();
         }
 
     };

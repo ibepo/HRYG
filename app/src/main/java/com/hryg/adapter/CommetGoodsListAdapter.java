@@ -4,7 +4,6 @@ package com.hryg.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,39 +13,25 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.hryg.base.PathConfig;
-import com.hryg.base.ToastUtils;
 import com.hryg.model.BuyOrderListData;
-import com.hryg.model.ResultBean;
-import com.hryg.model.ResultBean4Rep;
-import com.hryg.network.Network;
-import com.hryg.ui.buyorder.OrderDetail;
-import com.hryg.ui.buyorder.SubmitComment;
-import com.hryg.ui.order.PayType;
+import com.hryg.ui.buyorder.SubCommentGoodsList;
+import com.hryg.ui.buyorder.SubmitComment2;
 import com.kefanbufan.fengtimo.R;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import cn.pedant.SweetAlert.SweetAlertDialog;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class CommetGoodsListAdapter extends RecyclerView.Adapter {
 
     List<BuyOrderListData.DataBean> list;
     static Context context;
-    SweetAlertDialog ssdialog;
-    int positionFlag;
 
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.buy_orderlist_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_goods_list_item, parent, false);
         return new DebounceViewHolder(view);
     }
 
@@ -58,148 +43,25 @@ public class CommetGoodsListAdapter extends RecyclerView.Adapter {
         debounceViewHolder.gold.setText("¥" + list.get(position).getGold());
         debounceViewHolder.tvStore.setText(list.get(position).getStore_name());
 
-        debounceViewHolder.linMain.setOnClickListener(new View.OnClickListener() {
+//        ImageAdapter imageAdapter = new ImageAdapter();
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+//        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+//        debounceViewHolder.recView.setLayoutManager(linearLayoutManager);
+//        debounceViewHolder.recView.setAdapter(imageAdapter);
+
+
+        debounceViewHolder.tvType.setText("待评价");
+        debounceViewHolder.ivDel.setVisibility(View.VISIBLE);
+        debounceViewHolder.tvAction.setText("评价");
+        debounceViewHolder.tvAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent2 = new Intent(context, OrderDetail.class);
-                intent2.putExtra("order_id", list.get(position).getOrder_id());
-                intent2.putExtra("store_id", list.get(position).getStore_id());
+                Intent intent2 = new Intent(context, SubmitComment2.class);
+                intent2.putExtra("index", position + "");
+                intent2.putExtra("order_id", SubCommentGoodsList.order_id);
                 context.startActivity(intent2);
             }
         });
-
-
-        ImageAdapter imageAdapter = new ImageAdapter();
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        debounceViewHolder.recView.setLayoutManager(linearLayoutManager);
-        debounceViewHolder.recView.setAdapter(imageAdapter);
-//        imageAdapter.setImages(list.get(position).getGoods_image());
-
-        switch (Integer.parseInt(list.get(position).getStatus())) {
-
-            case 0:
-                debounceViewHolder.tvType.setText("已取消");
-                debounceViewHolder.ivDel.setVisibility(View.VISIBLE);
-                debounceViewHolder.ivDel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        new SweetAlertDialog(view.getContext(), SweetAlertDialog.WARNING_TYPE)
-                                .setTitleText("您确定要删除此商品!")
-                                .showContentText(false)
-                                .setConfirmText("是的")
-                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        dropGoods(list.get(position).getOrder_id());
-                                        list.remove(position);
-                                        notifyItemRemoved(position);
-                                        sDialog.cancel();
-                                        ssdialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE)
-                                                .setTitleText("正在删除...");
-
-                                        ssdialog.show();
-
-                                    }
-                                })
-                                .setCancelText("取消")
-                                .setCancelClickListener(null)
-                                .show();
-                    }
-                });
-
-
-                break;
-            case 11:
-                debounceViewHolder.tvType.setText("待付款");
-                debounceViewHolder.ivDel.setVisibility(View.GONE);
-                debounceViewHolder.tvAction.setText("去支付");
-                debounceViewHolder.tvAction.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent2 = new Intent(context, PayType.class);
-                        intent2.putExtra("order_id", list.get(position).getOrder_id());
-                        intent2.putExtra("store_id", list.get(position).getStore_id());
-                        context.startActivity(intent2);
-                    }
-                });
-
-                break;
-            case 20:
-                debounceViewHolder.ivDel.setVisibility(View.GONE);
-                debounceViewHolder.tvType.setText("待发货");
-                debounceViewHolder.tvAction.setText("查看订单");
-                debounceViewHolder.tvAction.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent2 = new Intent(context, OrderDetail.class);
-                        intent2.putExtra("order_id", list.get(position).getOrder_id());
-                        intent2.putExtra("store_id", list.get(position).getStore_id());
-                        context.startActivity(intent2);
-                    }
-                });
-
-                break;
-            case 30:
-                debounceViewHolder.ivDel.setVisibility(View.GONE);
-                debounceViewHolder.tvType.setText("待收货");
-                debounceViewHolder.tvAction.setText("确认收货");
-                debounceViewHolder.tvAction.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        new SweetAlertDialog(view.getContext(), SweetAlertDialog.WARNING_TYPE)
-                                .setTitleText("确定收货!")
-                                .showContentText(false)
-                                .setConfirmText("是的")
-                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        confirmOrder(list.get(position).getOrder_id());
-                                        positionFlag = position;
-                                        sDialog.cancel();
-                                        ssdialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE)
-                                                .setTitleText("正在操作...");
-
-                                        ssdialog.show();
-
-                                    }
-                                })
-                                .setCancelText("取消")
-                                .setCancelClickListener(null)
-                                .show();
-
-
-                    }
-                });
-                break;
-            case 40:
-                debounceViewHolder.tvType.setText("待评价");
-                debounceViewHolder.ivDel.setVisibility(View.VISIBLE);
-                switch (Integer.parseInt(list.get(position).getEvaluation_status())) {
-                    case 0:
-                        debounceViewHolder.tvAction.setText("评价");
-                        debounceViewHolder.tvAction.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent intent2 = new Intent(context, SubmitComment.class);
-                                intent2.putExtra("order_id", list.get(position).getOrder_id());
-                                context.startActivity(intent2);
-                            }
-                        });
-                        break;
-                    case 1:
-                        debounceViewHolder.tvAction.setText("已评价");
-
-                }
-
-                break;
-            case 80:
-                debounceViewHolder.ivDel.setVisibility(View.GONE);
-                debounceViewHolder.tvType.setText("已退款");
-                break;
-
-        }
 
 
     }
@@ -243,74 +105,5 @@ public class CommetGoodsListAdapter extends RecyclerView.Adapter {
         }
     }
 
-    //收货
-    public void confirmOrder(String order_id) {
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("user_id", PathConfig.user_id);
-        map.put("order_id", order_id);
-
-        Network.getOrderApi().confirmOrder(map)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer2);
-
-    }
-
-    Observer<ResultBean4Rep> observer2 = new Observer<ResultBean4Rep>() {
-        @Override
-        public void onCompleted() {
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            ToastUtils.showSuperToastAlertGreen(context, "连接服务器失败");
-        }
-
-        @Override
-        public void onNext(ResultBean4Rep resultBean) {
-            ssdialog.cancel();
-            ToastUtils.showSuperToastAlertGreen(context, resultBean.getDescription());
-            list.remove(positionFlag);
-            notifyItemRemoved(positionFlag);
-
-        }
-
-    };
-
-
-    //删除一个订单
-    public void dropGoods(String order_id) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("user_id", PathConfig.user_id);
-        map.put("order_id", order_id);
-
-        Network.getOrderApi().dropOrder(map)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-
-    }
-
-    Observer<ResultBean> observer = new Observer<ResultBean>() {
-        @Override
-        public void onCompleted() {
-        }
-
-        @Override
-        public void onError(Throwable e) {
-
-            ToastUtils.showSuperToastAlertGreen(context, "连接服务器失败");
-        }
-
-        @Override
-        public void onNext(ResultBean resultBean) {
-            ssdialog.cancel();
-            ToastUtils.showSuperToastAlertGreen(context, resultBean.getDescription());
-            if (resultBean.getCode() == 1)
-                notifyDataSetChanged();
-        }
-
-    };
 
 }

@@ -28,14 +28,14 @@
         android:textSize="16sp" />
 
     <TextView
-        android:background="@drawable/border_mima"
         android:id="@+id/tvAction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="15dp"
-        android:text="审核"
+        android:background="@drawable/border_mima"
+        android:text="分配ID"
         android:textColor="@color/dove_gray"
         android:textSize="14sp" />
 

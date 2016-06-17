@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gallery"
@@ -16,12 +17,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="我的"
+            android:text="个人中心"
             android:textSize="20dp" />
 
 
     </RelativeLayout>
-
 
 
     <ScrollView
@@ -36,10 +36,11 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
+                android:layout_height="100dp"
                 android:background="@drawable/personal_top_bg">
 
-                <ImageView
+
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/ivTouxiang"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
@@ -59,6 +60,7 @@
 
 
                     <TextView
+                        android:id="@+id/tvName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="昵称"
@@ -68,21 +70,23 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="10dp"
                         android:text="修改个人中心 >"
                         android:textColor="@color/white"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"
+                        android:visibility="gone" />
                 </LinearLayout>
 
 
                 <LinearLayout
-                    android:layout_width="90dp"
-                    android:layout_height="35dp"
+                    android:id="@+id/linRecharge"
+                    android:layout_width="80dp"
+                    android:layout_height="30dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:background="@drawable/redbag"
-                    android:gravity="center_vertical">
-
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
 
                 </LinearLayout>
@@ -119,16 +123,27 @@
                         android:textColor="@color/bunker"
                         android:textSize="16sp" />
 
-                    <TextView
+
+                    <LinearLayout
+                        android:id="@+id/linAllList"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginRight="10dp"
-                        android:background="@color/white"
-                        android:hint="查看所有订单 >"
-                        android:textColor="@color/bunker"
-                        android:textSize="16sp" />
+                        android:layout_marginRight="10dp">
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:background="@color/white"
+                            android:hint="查看所有订单 >"
+                            android:textColor="@color/bunker"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+
                 </RelativeLayout>
 
                 <ImageView
@@ -147,6 +162,7 @@
 
 
                     <LinearLayout
+                        android:id="@+id/linToPay"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -169,6 +185,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/linToSend"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -191,6 +208,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/linTOReceipt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -213,6 +231,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/linToComment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -235,6 +254,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/linToChange"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -313,18 +333,20 @@
 
 
                             <TextView
+                                android:id="@+id/tvYuE"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
-                                android:text="12.25"
+                                android:text=""
                                 android:textColor="@color/bunker"
                                 android:textSize="16sp" />
 
                             <TextView
+
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
-                                android:layout_marginTop="10dp"
+                                android:layout_marginTop="5dp"
                                 android:text="我的余额"
                                 android:textColor="@color/bunker"
                                 android:textSize="16sp" />
@@ -343,10 +365,11 @@
 
 
                             <TextView
+                                android:id="@+id/tvHongBao"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
-                                android:text="12.25"
+                                android:text=""
                                 android:textColor="@color/bunker"
                                 android:textSize="16sp" />
 
@@ -354,7 +377,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
-                                android:layout_marginTop="10dp"
+                                android:layout_marginTop="5dp"
                                 android:text="我的红包"
                                 android:textColor="@color/bunker"
                                 android:textSize="16sp" />
@@ -367,12 +390,14 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="40dp"
                         android:layout_marginTop="20dp"
                         android:background="@color/white"
                         android:orientation="vertical">
 
 
                         <LinearLayout
+                            android:id="@+id/linPersonalInfo"
                             android:layout_width="match_parent"
                             android:layout_height="45dp"
                             android:gravity="center_vertical">
@@ -426,6 +451,7 @@
                             android:background="@color/gallery" />
 
                         <LinearLayout
+                            android:id="@+id/linReview"
                             android:layout_width="match_parent"
                             android:layout_height="45dp"
                             android:gravity="center_vertical">
@@ -452,6 +478,7 @@
                             android:background="@color/gallery" />
 
                         <LinearLayout
+                            android:id="@+id/linApplyBusiness"
                             android:layout_width="match_parent"
                             android:layout_height="45dp"
                             android:gravity="center_vertical">
@@ -471,6 +498,27 @@
 
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:id="@+id/linID"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_marginLeft="20dp"
+                                android:background="@drawable/personal_center_ask" />
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:text="ID 分配" />
+
+                        </LinearLayout>
+
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="0.2dp"
@@ -478,6 +526,7 @@
                             android:background="@color/gallery" />
 
                         <LinearLayout
+                            android:id="@+id/linPic"
                             android:layout_width="match_parent"
                             android:layout_height="45dp"
                             android:gravity="center_vertical">

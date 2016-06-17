@@ -17,6 +17,7 @@ import com.hryg.base.ToastUtils;
 import com.hryg.model.GoodsData;
 import com.hryg.model.ResultBean;
 import com.hryg.network.Network;
+import com.hryg.ui.MainAct;
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.kefanbufan.fengtimo.R;
@@ -230,6 +231,8 @@ public class GoodsWebFragment extends BaseFragment {
 
                 break;
             case R.id.tvBUG:
+                addGoods();
+                MainAct.goShopCar();
                 break;
 
         }

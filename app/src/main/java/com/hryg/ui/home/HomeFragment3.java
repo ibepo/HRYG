@@ -1,15 +1,18 @@
 package com.hryg.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
-import com.bartoszlipinski.recyclerviewheader2.RecyclerViewHeader;
+import com.aspsine.irecyclerview.IRecyclerView;
+import com.aspsine.irecyclerview.OnLoadMoreListener;
+import com.aspsine.irecyclerview.OnRefreshListener;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
@@ -20,6 +23,8 @@ import com.hryg.base.BaseFragment;
 import com.hryg.base.PathConfig;
 import com.hryg.model.HomeData;
 import com.hryg.network.Network;
+import com.hryg.ui.search.Search;
+import com.hryg.widget.LoadMoreFooterView;
 import com.kefanbufan.fengtimo.R;
 
 import java.util.HashMap;
@@ -32,47 +37,105 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 
-public class HomeFragment3 extends BaseFragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
+public class HomeFragment3 extends BaseFragment implements OnLoadMoreListener, OnRefreshListener, BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 
 
+    private LoadMoreFooterView loadMoreFooterView;
     private SliderLayout mDemoSlider;
-    private RecyclerView gridRv;
+    private IRecyclerView iRecyclerView;
     GoodGridListAdapter adapter = new GoodGridListAdapter();
-    RecyclerViewHeader header;
     int page = 1;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.home, null, false);
+        View view = inflater.inflate(R.layout.home4, null, false);
 
-        //幻灯片
-        mDemoSlider = (SliderLayout) view.findViewById(R.id.slider);
-        mDemoSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
-        mDemoSlider.setCustomAnimation(new DescriptionAnimation());
 
         //下方商品列表
-        gridRv = (RecyclerView) view.findViewById(R.id.gridRv);
-        gridRv.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        gridRv.setAdapter(adapter);
+        iRecyclerView = (IRecyclerView) view.findViewById(R.id.iRecyclerView);
+        iRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        iRecyclerView.addHeaderView(getHeadBanner());
+        iRecyclerView.setIAdapter(adapter);
 
-        header = (RecyclerViewHeader) view.findViewById(R.id.header);
-        header.attachTo(gridRv);
+        loadMoreFooterView = (LoadMoreFooterView) iRecyclerView.getLoadMoreFooterView();
+        iRecyclerView.setOnRefreshListener(this);
+        iRecyclerView.setOnLoadMoreListener(this);
+        iRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                iRecyclerView.setRefreshing(true);
+            }
+        });
 
-        getData(page);
-
+        ButterKnife.bind(this, view);
         return view;
     }
 
+
     //幻灯片
     public View getHeadBanner() {
-        View headView = LayoutInflater.from(getActivity()).inflate(R.layout.home_banner, gridRv, false);
+        View headView = LayoutInflater.from(getActivity()).inflate(R.layout.home_banner, iRecyclerView, false);
         mDemoSlider = (SliderLayout) headView.findViewById(R.id.slider);
         mDemoSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
         mDemoSlider.setCustomAnimation(new DescriptionAnimation());
+        LinearLayout linSearch = (LinearLayout) headView.findViewById(R.id.linSearch);
+        linSearch.getBackground().setAlpha(100);
+        linSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), Search.class);
+                getActivity().startActivity(intent);
+            }
+        });
+
+
+        LinearLayout linMeiRong = (LinearLayout) headView.findViewById(R.id.linMeiRong);
+        LinearLayout linDianQi = (LinearLayout) headView.findViewById(R.id.linDianQi);
+        LinearLayout linRiHua = (LinearLayout) headView.findViewById(R.id.linRiHua);
+        LinearLayout linYiFu = (LinearLayout) headView.findViewById(R.id.linYiFu);
+
+
+        linMeiRong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), Search.class);
+                intent.putExtra("cate_id", "1321");
+                getActivity().startActivity(intent);
+
+            }
+        });
+        linDianQi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), Search.class);
+                intent.putExtra("cate_id", "1732");
+                getActivity().startActivity(intent);
+
+            }
+        });
+        linRiHua.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), Search.class);
+                intent.putExtra("cate_id", "13634");
+                getActivity().startActivity(intent);
+
+            }
+        });
+        linYiFu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), Search.class);
+                intent.putExtra("cate_id", "1298");
+                getActivity().startActivity(intent);
+
+            }
+        });
+
+
         return headView;
     }
-
 
     void getData(int page) {
         Map<String, Object> map = new HashMap<>();
@@ -86,6 +149,7 @@ public class HomeFragment3 extends BaseFragment implements BaseSliderView.OnSlid
 
 
     void initBanner(List<HomeData.Data> list) {
+        mDemoSlider.removeAllSliders();
         for (HomeData.Data data : list) {
             TextSliderView textSliderView = new TextSliderView(getContext());
             textSliderView
@@ -102,7 +166,7 @@ public class HomeFragment3 extends BaseFragment implements BaseSliderView.OnSlid
         mDemoSlider.setPresetTransformer(SliderLayout.Transformer.Accordion);
         mDemoSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
         mDemoSlider.setCustomAnimation(new DescriptionAnimation());
-        mDemoSlider.setDuration(4000);
+        mDemoSlider.setDuration(2500);
         mDemoSlider.addOnPageChangeListener(this);
     }
 
@@ -118,19 +182,40 @@ public class HomeFragment3 extends BaseFragment implements BaseSliderView.OnSlid
 
         @Override
         public void onNext(HomeData homeData) {
+            iRecyclerView.setRefreshing(false);
             if (page == 1) {
                 initBanner(homeData.getData());
                 adapter.setImages(homeData.getGoods_list(), getContext());
                 page++;
             } else {
-                page++;
-                adapter.addData(homeData.getGoods_list());
+                if (homeData.getGoods_list().size() > 0) {
+                    page++;
+                    adapter.addData(homeData.getGoods_list());
+                } else {
+                    loadMoreFooterView.setStatus(LoadMoreFooterView.Status.THE_END);
+                }
+
 
             }
 
         }
     };
 
+
+    @Override
+    public void onRefresh() {
+        page = 1;
+        getData(page);
+        loadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
+    }
+
+    @Override
+    public void onLoadMore(View loadMoreView) {
+        getData(page);
+        if (loadMoreFooterView.canLoadMore() && adapter.getItemCount() > 0) {
+            loadMoreFooterView.setStatus(LoadMoreFooterView.Status.LOADING);
+        }
+    }
 
     @Override
     public void onSliderClick(BaseSliderView slider) {

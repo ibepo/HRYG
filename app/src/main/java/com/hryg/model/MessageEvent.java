@@ -1,7 +1,10 @@
 package com.hryg.model;
 
-/**
- * Created by kefanbufan on 16/6/6.
- */
+
 public class MessageEvent {
+    public final String message;
+
+    public MessageEvent(String message) {
+        this.message = message;
+    }
 }

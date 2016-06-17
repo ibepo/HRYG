@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/gallery"
     android:orientation="vertical">
 
     <include
@@ -17,19 +17,81 @@
         android:layout_below="@id/top"
         android:background="@color/gallery" />
 
-
-    <TextView
-        android:id="@+id/tvApply"
+    <RelativeLayout
+        android:id="@+id/rlMan"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginLeft="70dp"
-        android:layout_marginRight="70dp"
-        android:layout_marginTop="30dp"
-        android:background="@color/red_orange"
-        android:gravity="center"
-        android:text="确认"
-        android:textColor="@color/white"
-        android:textSize="16sp" />
+        android:layout_height="45dp"
+        android:background="@color/white"
+        android:gravity="center_vertical">
 
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="男"
+            android:textColor="@color/bunker" />
+
+
+        <ImageView
+            android:id="@+id/ivMan"
+            android:layout_width="25dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/address_yes" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlWomen"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/white"
+        android:gravity="center_vertical">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="女"
+            android:textColor="@color/bunker" />
+
+        <ImageView
+            android:id="@+id/ivWomen"
+            android:layout_width="25dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/address_yes" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlSecrect"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/white"
+        android:gravity="center_vertical">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="保密"
+            android:textColor="@color/bunker" />
+
+        <ImageView
+            android:id="@+id/ivSecrect"
+            android:layout_width="25dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/address_yes" />
+
+    </RelativeLayout>
 
 </LinearLayout>

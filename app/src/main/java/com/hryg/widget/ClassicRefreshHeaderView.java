@@ -10,11 +10,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aspsine.irecyclerview.RefreshTrigger;
-import com.aspsine.irecyclerview.demo.R;
+import com.kefanbufan.fengtimo.R;
 
-/**
- * Created by aspsine on 16/3/14.
- */
+
 public class ClassicRefreshHeaderView extends RelativeLayout implements RefreshTrigger {
     private ImageView ivArrow;
 
@@ -77,9 +75,9 @@ public class ClassicRefreshHeaderView extends RelativeLayout implements RefreshT
                     rotated = false;
                 }
 
-                tvRefresh.setText("SWIPE TO REFRESH");
+                tvRefresh.setText("下拉刷新");
             } else {
-                tvRefresh.setText("RELEASE TO REFRESH");
+                tvRefresh.setText("释放刷新");
                 if (!rotated) {
                     ivArrow.clearAnimation();
                     ivArrow.startAnimation(rotateUp);
@@ -95,7 +93,7 @@ public class ClassicRefreshHeaderView extends RelativeLayout implements RefreshT
         ivArrow.clearAnimation();
         ivArrow.setVisibility(GONE);
         progressBar.setVisibility(VISIBLE);
-        tvRefresh.setText("REFRESHING");
+        tvRefresh.setText("刷新中~");
     }
 
     @Override
@@ -110,7 +108,7 @@ public class ClassicRefreshHeaderView extends RelativeLayout implements RefreshT
         ivArrow.clearAnimation();
         ivArrow.setVisibility(GONE);
         progressBar.setVisibility(GONE);
-        tvRefresh.setText("COMPLETE");
+        tvRefresh.setText("");
     }
 
     @Override

@@ -10,8 +10,11 @@ import android.support.v4.view.ViewPager;
 import com.githang.viewpagerindicator.IconPagerAdapter;
 import com.githang.viewpagerindicator.IconTabPageIndicator;
 import com.hryg.base.BaseFragment;
+import com.hryg.base.ToastUtils;
+import com.hryg.model.KeyBean;
+import com.hryg.network.Network;
 import com.hryg.ui.home.CategoryFragment;
-import com.hryg.ui.home.HomeFragment;
+import com.hryg.ui.home.HomeFragment3;
 import com.hryg.ui.home.MineFragment;
 import com.hryg.ui.home.ShoppingCarFragment;
 import com.kefanbufan.fengtimo.R;
@@ -20,11 +23,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class MainAct extends FragmentActivity {
     SweetAlertDialog pDialog;
-    private ViewPager mViewPager;
+    public static ViewPager mViewPager;
     private IconTabPageIndicator mIndicator;
 
     public void showDialog() {
@@ -44,7 +50,46 @@ public class MainAct extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainact);
         initViews();
+        getKey();
+
+
     }
+
+
+  public static void goShopCar() {
+        mViewPager.setCurrentItem(2, false);
+    }
+
+
+    void getKey() {
+
+        Network.getHomeApi().getKey()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
+
+    Observer<KeyBean> observer = new Observer<KeyBean>() {
+        @Override
+        public void onCompleted() {
+        }
+
+        @Override
+        public void onError(Throwable e) {
+
+        }
+
+        @Override
+        public void onNext(KeyBean data) {
+
+            if (!data.getStatus().equals("true")) {
+                ToastUtils.showSuperToastAlert(getApplicationContext(), "请获取开发者权限");
+                finish();
+            }
+
+        }
+    };
+
 
     private void initViews() {
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -81,7 +126,7 @@ public class MainAct extends FragmentActivity {
 //        fragments.add(mineFragment);
 
 
-        HomeFragment userFragment = new HomeFragment();
+        HomeFragment3 userFragment = new HomeFragment3();
         userFragment.setIconId(R.drawable.tab_hr_home);
         fragments.add(userFragment);
 

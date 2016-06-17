@@ -3,58 +3,83 @@
 package com.hryg.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.hryg.model.AddressListData;
-import com.hryg.ui.address.AddressModify;
+import com.hryg.base.PathConfig;
+import com.hryg.base.ToastUtils;
+import com.hryg.model.ResultBean4Rep;
+import com.hryg.model.ReviewListBean;
+import com.hryg.network.Network;
 import com.kefanbufan.fengtimo.R;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class ReviewListAdapter extends RecyclerView.Adapter {
 
-    List<AddressListData.DataBean> list;
+    List<ReviewListBean.DataBean> list;
     static Context context;
+    SweetAlertDialog ssdialog;
+    int positionFlag;
 
 
     @Override
+
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.address_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.review_item, parent, false);
         return new DebounceViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         DebounceViewHolder viewHolder = (DebounceViewHolder) holder;
-        viewHolder.tvName.setText(list.get(position).getConsignee());
-        viewHolder.tvPhone.setText(list.get(position).getPhone_tel());
-        viewHolder.tvAddress.setText(list.get(position).getRegion_name() + list.get(position).getAddress());
+        viewHolder.tvName.setText(list.get(position).getUser_name());
 
-        viewHolder.linMofify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent2 = new Intent(context, AddressModify.class);
-                intent2.putExtra("addr_id", list.get(position).getAddr_id());
-                context.startActivity(intent2);
-            }
-        });
-
-        if (Integer.parseInt(list.get(position).getIf_show()) == 1) {
-            viewHolder.imageIv.setVisibility(View.VISIBLE);
+        if (list.get(position).getPhone_tel() == null) {
+            viewHolder.tvPhone.setText("");
         } else {
-            viewHolder.imageIv.setVisibility(View.INVISIBLE);
+            viewHolder.tvPhone.setText(list.get(position).getPhone_tel().toString());
         }
 
+        viewHolder.tvAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new SweetAlertDialog(view.getContext(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("是否批准成为商家?")
+                        .showContentText(false)
+                        .setCancelText("拒绝")
+                        .setConfirmText("通过")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+
+                                review(list.get(position).getUserId());
+                                positionFlag = position;
+                                sDialog.cancel();
+                                ssdialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE)
+                                        .setTitleText("正在操作...");
+
+                                ssdialog.show();
+
+                            }
+                        })
+                        .setCancelText("取消")
+                        .setCancelClickListener(null)
+                        .show();
+            }
+        });
 
     }
 
@@ -63,24 +88,20 @@ public class ReviewListAdapter extends RecyclerView.Adapter {
         return list == null ? 0 : list.size();
     }
 
-    public void setImages(List<AddressListData.DataBean> list, Context context) {
+    public void setImages(List<ReviewListBean.DataBean> list, Context context) {
         this.context = context;
         this.list = list;
         notifyDataSetChanged();
     }
 
     static class DebounceViewHolder extends RecyclerView.ViewHolder {
-        @Bind(R.id.imageIv)
-        ImageView imageIv;
+
         @Bind(R.id.tvName)
         TextView tvName;
         @Bind(R.id.tvPhone)
         TextView tvPhone;
-        @Bind(R.id.tvAddress)
-        TextView tvAddress;
-        @Bind(R.id.linMofify)
-        LinearLayout linMofify;
-
+        @Bind(R.id.tvAction)
+        TextView tvAction;
 
         public DebounceViewHolder(View itemView) {
             super(itemView);
@@ -88,6 +109,42 @@ public class ReviewListAdapter extends RecyclerView.Adapter {
 
 
         }
+    }
+
+
+    Observer<ResultBean4Rep> observer2 = new Observer<ResultBean4Rep>() {
+        @Override
+        public void onCompleted() {
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            ToastUtils.showSuperToastAlertGreen(context, "连接服务器失败");
+        }
+
+        @Override
+        public void onNext(ResultBean4Rep resultBean) {
+            ssdialog.cancel();
+            ToastUtils.showSuperToastAlertGreen(context, resultBean.getDescription());
+            list.remove(positionFlag);
+            notifyItemRemoved(positionFlag);
+            if (resultBean.getCode() == 1)
+                notifyDataSetChanged();
+        }
+
+    };
+
+    void review(String userid) {
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("user_id", PathConfig.user_id);
+        map.put("userId", userid);
+        Network.getMineApi().review(map)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer2);
+
+
     }
 
 

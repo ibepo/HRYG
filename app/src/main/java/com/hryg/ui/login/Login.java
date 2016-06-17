@@ -8,7 +8,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hryg.base.BaseActivity;
+import com.hryg.base.MyTextUtils;
 import com.hryg.base.PathConfig;
+import com.hryg.base.SharedPreferencesUtils;
 import com.hryg.base.ToastUtils;
 import com.hryg.model.LoginUserId;
 import com.hryg.model.ResultBean;
@@ -55,12 +57,13 @@ public class Login extends BaseActivity {
         getTopBarNoBack("登录");
         initView();
 
+        if (!MyTextUtils.isEmpty(SharedPreferencesUtils.getParam(this, "user_id", "").toString())) {
+            PathConfig.user_id = SharedPreferencesUtils.getParam(this, "user_id", "").toString();
+            Intent intent = new Intent(Login.this, MainAct.class);
+            Login.this.startActivity(intent);
+            finish();
+        }
 
-//test
-        PathConfig.user_id = "55434";
-        Intent intent = new Intent(Login.this, MainAct.class);
-        Login.this.startActivity(intent);
-        finish();
 
     }
 
@@ -100,6 +103,7 @@ public class Login extends BaseActivity {
             ToastUtils.showSuperToastAlertGreen(getApplicationContext(), resultBean.getDescription());
             if (resultBean.getCode() == 1) {
 //                ToastUtils.showSuperToastAlertGreen(getApplicationContext(),resultBean.getData().user_id);
+                SharedPreferencesUtils.setParam(Login.this, "user_id", resultBean.getData().user_id);
                 PathConfig.user_id = resultBean.getData().user_id;
                 Intent intent = new Intent(Login.this, MainAct.class);
                 Login.this.startActivity(intent);

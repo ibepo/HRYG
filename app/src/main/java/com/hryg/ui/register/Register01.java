@@ -162,6 +162,19 @@ public class Register01 extends BaseActivity {
                 break;
             case R.id.linNextStep:
 
+                if (MyTextUtils.isEmpty(RegisterParameter.getInstance().getPhone())) {
+                    ToastUtils.showSuperToastAlert(Register01.this, "请输入手机号");
+                    return;
+                }
+                if (MyTextUtils.isEmpty(RegisterParameter.getInstance().getPassword())) {
+                    ToastUtils.showSuperToastAlert(Register01.this, "密码不能为空");
+                    return;
+                }
+
+                if (MyTextUtils.isEmpty(RegisterParameter.getInstance().getPassword_confirm())) {
+                    ToastUtils.showSuperToastAlert(Register01.this, "确认密码不能为空");
+                    return;
+                }
 
 
                 Intent intent = new Intent(this, Register02.class);

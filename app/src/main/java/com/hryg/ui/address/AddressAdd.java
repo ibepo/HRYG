@@ -323,6 +323,7 @@ public class AddressAdd extends BaseActivity {
             dimissDialog();
             if (data.getCode() == 1) {
                 ToastUtils.showSuperToastAlertGreen(AddressAdd.this, data.getDescription());
+                finish();
             } else {
                 ToastUtils.showSuperToastAlert(AddressAdd.this, data.getDescription());
             }

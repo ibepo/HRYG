@@ -1,3 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="languages">
+        <item>大小尺寸不符</item>
+        <item>材质、面料不符 </item>
+        <item>工艺/手艺问题</item>
+        <item>颜色、款式、图案与描述不符</item>
+        <item>发货问题</item>
+        <item>服务/态度</item>
+        <item>不喜欢/穿着效果不好</item>
+        <item>拍错/多拍</item>
+        <item>其他</item>
+    </string-array>
 </resources>

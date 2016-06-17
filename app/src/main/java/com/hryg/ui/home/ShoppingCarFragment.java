@@ -3,21 +3,19 @@ package com.hryg.ui.home;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
+import com.aspsine.irecyclerview.IRecyclerView;
+import com.aspsine.irecyclerview.OnRefreshListener;
 import com.hryg.adapter.ShoppingCarAdapter;
 import com.hryg.base.BaseFragment;
 import com.hryg.base.PathConfig;
 import com.hryg.model.ShoppingCar;
 import com.hryg.network.Network;
 import com.kefanbufan.fengtimo.R;
-
-import net.frakbot.jumpingbeans.JumpingBeans;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,41 +27,48 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 
-public class ShoppingCarFragment extends BaseFragment {
+public class ShoppingCarFragment extends BaseFragment implements OnRefreshListener {
 
     @Bind(R.id.rlNodata)
     RelativeLayout rlNodata;
-    @Bind(R.id.tvLoading)
-    TextView tvLoading;
-    private RecyclerView gridRv;
+    private IRecyclerView iRecyclerView;
     ShoppingCarAdapter adapter = new ShoppingCarAdapter();
+    float subtotal;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.shoppingcar_fragment, null, false);
-
-        getData();
         ButterKnife.bind(this, view);
 
-        //下方商品列表
-        gridRv = (RecyclerView) view.findViewById(R.id.gridRv);
-        gridRv.setAdapter(adapter);
-        gridRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        iRecyclerView = (IRecyclerView) view.findViewById(R.id.iRecyclerView);
+        iRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        iRecyclerView.setIAdapter(adapter);
+        iRecyclerView.setOnRefreshListener(this);
+        iRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                iRecyclerView.setRefreshing(true);
+            }
+        });
 
-        rlNodata.setVisibility(View.GONE);
-
-        JumpingBeans.with(tvLoading)
-                .appendJumpingDots()
-                .build();
-
+        rlNodata.setVisibility(View.VISIBLE);
         return view;
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getData();
+    }
+
+    @Override
+    public void onRefresh() {
+        getData();
+    }
+
     void getData() {
-
-
         Map<String, Object> map = new HashMap<>();
         map.put("user_id", PathConfig.user_id);
         Network.getGoodsApi().getShoppingCar(map)
@@ -80,23 +85,24 @@ public class ShoppingCarFragment extends BaseFragment {
 
         @Override
         public void onError(Throwable e) {
-            rlNodata.setVisibility(View.VISIBLE);
-            tvLoading.setVisibility(View.GONE);
-
+            iRecyclerView.setRefreshing(false);
         }
 
         @Override
         public void onNext(ShoppingCar data) {
-
-            tvLoading.setVisibility(View.GONE);
-            if (data.getData().size() > 0) {
+            iRecyclerView.setRefreshing(false);
+            if (data.getData() != null) {
                 rlNodata.setVisibility(View.GONE);
+                subtotal = 0;
+                for (ShoppingCar.DataBean bean : data.getData()) {
+                    subtotal = subtotal + Float.parseFloat(bean.getSubtotal());
+                }
+                adapter.setImages(data.getData(), subtotal, getContext());
+
             } else {
                 rlNodata.setVisibility(View.VISIBLE);
+                adapter.setImages(null, 0, getContext());
             }
-
-            adapter.setImages(data.getData(), getContext());
-
 
         }
     };

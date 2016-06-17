@@ -3,42 +3,32 @@
 package com.hryg.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.hryg.base.PathConfig;
-import com.hryg.base.ToastUtils;
-import com.hryg.model.ResultBean4Rep;
-import com.hryg.model.ReviewListBean;
-import com.hryg.network.Network;
+import com.hryg.model.IdListBean;
+import com.hryg.ui.mine.IDGroupList;
 import com.kefanbufan.fengtimo.R;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import cn.pedant.SweetAlert.SweetAlertDialog;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class DownLineAdapter extends RecyclerView.Adapter {
 
-    List<ReviewListBean.DataBean> list;
+    List<IdListBean.DataBean> list;
     static Context context;
-    SweetAlertDialog ssdialog;
-    int positionFlag;
 
 
     @Override
 
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.review_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.downline_item, parent, false);
         return new DebounceViewHolder(view);
     }
 
@@ -56,28 +46,10 @@ public class DownLineAdapter extends RecyclerView.Adapter {
         viewHolder.tvAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new SweetAlertDialog(view.getContext(), SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText("是否批准成为商家?")
-                        .showContentText(false)
-                        .setCancelText("拒绝")
-                        .setConfirmText("通过")
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sDialog) {
+                Intent intent13 = new Intent(context, IDGroupList.class);
+                intent13.putExtra("pei_id", list.get(position).getUserId());
+                context.startActivity(intent13);
 
-                                review(list.get(position).getUserId());
-                                positionFlag = position;
-                                sDialog.cancel();
-                                ssdialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE)
-                                        .setTitleText("正在操作...");
-
-                                ssdialog.show();
-
-                            }
-                        })
-                        .setCancelText("取消")
-                        .setCancelClickListener(null)
-                        .show();
             }
         });
 
@@ -88,7 +60,7 @@ public class DownLineAdapter extends RecyclerView.Adapter {
         return list == null ? 0 : list.size();
     }
 
-    public void setImages(List<ReviewListBean.DataBean> list, Context context) {
+    public void setImages(List<IdListBean.DataBean> list, Context context) {
         this.context = context;
         this.list = list;
         notifyDataSetChanged();
@@ -109,42 +81,6 @@ public class DownLineAdapter extends RecyclerView.Adapter {
 
 
         }
-    }
-
-
-    Observer<ResultBean4Rep> observer2 = new Observer<ResultBean4Rep>() {
-        @Override
-        public void onCompleted() {
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            ToastUtils.showSuperToastAlertGreen(context, "连接服务器失败");
-        }
-
-        @Override
-        public void onNext(ResultBean4Rep resultBean) {
-            ssdialog.cancel();
-            ToastUtils.showSuperToastAlertGreen(context, resultBean.getDescription());
-            list.remove(positionFlag);
-            notifyItemRemoved(positionFlag);
-            if (resultBean.getCode() == 1)
-                notifyDataSetChanged();
-        }
-
-    };
-
-    void review(String userid) {
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("user_id", PathConfig.user_id);
-        map.put("userId", userid);
-        Network.getMineApi().review(map)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer2);
-
-
     }
 
 

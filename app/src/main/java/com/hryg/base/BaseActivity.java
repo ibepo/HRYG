@@ -29,6 +29,16 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
+
+    public void showDialogWithTitle(String c) {
+        pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
+                .setTitleText(c);
+        pDialog.show();
+        pDialog.setCancelable(false);
+
+    }
+
+
     public void dimissDialog() {
         pDialog.dismissWithAnimation();
     }

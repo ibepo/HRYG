@@ -9,16 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.chanven.lib.cptr.PtrClassicFrameLayout;
-import com.chanven.lib.cptr.loadmore.OnLoadMoreListener;
-import com.chanven.lib.cptr.recyclerview.RecyclerAdapterWithHF;
+import com.bartoszlipinski.recyclerviewheader2.RecyclerViewHeader;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.hryg.adapter.GoodGridListAdapter;
-import com.hryg.adapter.KFRreash;
 import com.hryg.base.BaseFragment;
 import com.hryg.base.PathConfig;
 import com.hryg.model.HomeData;
@@ -37,46 +34,32 @@ import rx.schedulers.Schedulers;
 
 public class HomeFragment2 extends BaseFragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 
-    PtrClassicFrameLayout ptrClassicFrameLayout;
 
     private SliderLayout mDemoSlider;
     private RecyclerView gridRv;
     GoodGridListAdapter adapter = new GoodGridListAdapter();
-    private RecyclerAdapterWithHF mAdapter;
-    KFRreash kfRreash;
+    RecyclerViewHeader header;
     int page = 1;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.home2, null, false);
+        View view = inflater.inflate(R.layout.home, null, false);
 
+        //幻灯片
+        mDemoSlider = (SliderLayout) view.findViewById(R.id.slider);
+        mDemoSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
+        mDemoSlider.setCustomAnimation(new DescriptionAnimation());
 
         //下方商品列表
-        kfRreash = new KFRreash(adapter);
-        kfRreash.addCarouse(getHeadBanner());
         gridRv = (RecyclerView) view.findViewById(R.id.gridRv);
-        final GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
-        gridRv.setLayoutManager(layoutManager);
-        gridRv.setAdapter(kfRreash);
-        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                return kfRreash.isBanner(position) ? layoutManager.getSpanCount() : 1;
+        gridRv.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        gridRv.setAdapter(adapter);
 
-            }
-        });
+        header = (RecyclerViewHeader) view.findViewById(R.id.header);
+        header.attachTo(gridRv);
+
         getData(page);
-
-        ptrClassicFrameLayout = (PtrClassicFrameLayout) view.findViewById(R.id.test_recycler_view_frame);
-        ptrClassicFrameLayout.autoRefresh(true);
-        ptrClassicFrameLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void loadMore() {
-
-            }
-        });
-
 
         return view;
     }
@@ -131,13 +114,12 @@ public class HomeFragment2 extends BaseFragment implements BaseSliderView.OnSlid
         @Override
         public void onError(Throwable e) {
 
-//            ToastUtils.showSuperToastAlertGreen(getContext(), "连接服务器失败");
         }
 
         @Override
         public void onNext(HomeData homeData) {
             if (page == 1) {
-//                initBanner(homeData.getData());
+                initBanner(homeData.getData());
                 adapter.setImages(homeData.getGoods_list(), getContext());
                 page++;
             } else {

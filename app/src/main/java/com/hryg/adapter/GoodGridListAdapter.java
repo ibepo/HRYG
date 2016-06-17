@@ -5,6 +5,7 @@ package com.hryg.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +39,7 @@ public class GoodGridListAdapter extends RecyclerView.Adapter {
         DebounceViewHolder debounceViewHolder = (DebounceViewHolder) holder;
         Glide.with(holder.itemView.getContext()).load(list.get(position).getDefault_image()).into(debounceViewHolder.imageIv);
         debounceViewHolder.descriptionTv.setText(list.get(position).getGoods_name());
-        debounceViewHolder.gold.setText(list.get(position).getGold());
+        debounceViewHolder.gold.setText("¥ " + list.get(position).getGold());
         debounceViewHolder.linItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,6 +62,15 @@ public class GoodGridListAdapter extends RecyclerView.Adapter {
         this.list = list;
         notifyDataSetChanged();
     }
+
+    public void addData(List<HomeData.Goods_list> list) {
+        int startPosition = getItemCount();
+        this.list.addAll(list);
+        Log.e("fuck", this.list.toString());
+        notifyItemRangeInserted(startPosition, list.size());
+
+    }
+
 
     static class DebounceViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.imageIv)

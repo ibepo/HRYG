@@ -7,6 +7,7 @@ import com.hryg.network.api.AddressApi;
 import com.hryg.network.api.GoodsApi;
 import com.hryg.network.api.HomeApi;
 import com.hryg.network.api.LoginApi;
+import com.hryg.network.api.MineApi;
 import com.hryg.network.api.OrderApi;
 import com.hryg.network.api.RegisterApi;
 import com.hryg.network.api.SearchApi;
@@ -28,6 +29,7 @@ public class Network {
     private static GoodsApi goodsApi;
     private static OrderApi orderApi;
     private static AddressApi addressApi;
+    private static MineApi mineApi;
 
 
     private static OkHttpClient okHttpClient = new OkHttpClient();
@@ -106,7 +108,7 @@ public class Network {
     }
 
 
-    //详情页数据
+    //订单页数据
     public static OrderApi getOrderApi() {
         if (orderApi == null) {
             Retrofit retrofit = new Retrofit.Builder()
@@ -134,5 +136,20 @@ public class Network {
         }
         return addressApi;
     }
+
+    //个人中心接口
+    public static MineApi getMineApi() {
+        if (mineApi == null) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .client(okHttpClient)
+                    .baseUrl(PathConfig.Address)
+                    .addConverterFactory(gsonConverterFactory)
+                    .addCallAdapterFactory(rxJavaCallAdapterFactory)
+                    .build();
+            mineApi = retrofit.create(MineApi.class);
+        }
+        return mineApi;
+    }
+
 
 }

@@ -2,67 +2,106 @@ package com.hryg.ui.buyorder;
 
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
-import com.hryg.adapter.OrderListAdapter;
+import com.aspsine.irecyclerview.IRecyclerView;
+import com.aspsine.irecyclerview.OnLoadMoreListener;
+import com.aspsine.irecyclerview.OnRefreshListener;
+import com.hryg.adapter.BuyOrderListAdapter;
 import com.hryg.base.BaseActivity;
 import com.hryg.base.PathConfig;
 import com.hryg.base.ToastUtils;
-import com.hryg.model.OrderListData;
+import com.hryg.model.BuyOrderListData;
 import com.hryg.network.Network;
+import com.hryg.widget.LoadMoreFooterView;
 import com.kefanbufan.fengtimo.R;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class BuyOrderList extends BaseActivity {
+public class BuyOrderList extends BaseActivity implements OnLoadMoreListener, OnRefreshListener {
 
 
-    @Bind(R.id.gridRv)
-    RecyclerView gridRv;
-
-
-    OrderListAdapter adapter = new OrderListAdapter();
+    private LoadMoreFooterView loadMoreFooterView;
+    private IRecyclerView iRecyclerView;
+    int page = 1;
+    BuyOrderListAdapter adapter = new BuyOrderListAdapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.order_list);
         ButterKnife.bind(this);
-        getTopBar("商品清单");
+        getTopBar("全部订单");
 
-        gridRv.setAdapter(adapter);
-        gridRv.setLayoutManager(new LinearLayoutManager(BuyOrderList.this));
-        getData();
+        iRecyclerView = (IRecyclerView) this.findViewById(R.id.iRecyclerView);
+        iRecyclerView.setLayoutManager(new LinearLayoutManager(BuyOrderList.this));
+        iRecyclerView.setIAdapter(adapter);
+
+        loadMoreFooterView = (LoadMoreFooterView) iRecyclerView.getLoadMoreFooterView();
+        iRecyclerView.setOnRefreshListener(this);
+        iRecyclerView.setOnLoadMoreListener(this);
+        iRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                iRecyclerView.setRefreshing(true);
+            }
+        });
 
     }
 
+    @Override
+    public void onRefresh() {
+        page = 1;
+        getData(page);
+        loadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
+    }
 
-    public void getData() {
-        Network.getOrderApi().getOrderList(PathConfig.user_id)
+    @Override
+    public void onLoadMore(View loadMoreView) {
+        getData(page);
+        if (loadMoreFooterView.canLoadMore() && adapter.getItemCount() > 0) {
+            loadMoreFooterView.setStatus(LoadMoreFooterView.Status.LOADING);
+        }
+    }
+
+
+    public void getData(int page) {
+        Network.getOrderApi().getAllOrder(PathConfig.user_id, null, page + "")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
 
 
-    Observer<OrderListData> observer = new Observer<OrderListData>() {
+    Observer<BuyOrderListData> observer = new Observer<BuyOrderListData>() {
         @Override
         public void onCompleted() {
         }
 
         @Override
         public void onError(Throwable e) {
+            iRecyclerView.setRefreshing(false);
             ToastUtils.showSuperToastAlertGreen(getApplicationContext(), "连接服务器失败");
         }
 
         @Override
-        public void onNext(OrderListData data) {
-//            ToastUtils.showSuperToastAlertGreen(getApplicationContext(), data.getDescription());
-            adapter.setImages(data.getData(), BuyOrderList.this);
+        public void onNext(BuyOrderListData data) {
+            iRecyclerView.setRefreshing(false);
+            if (page == 1) {
+                adapter.setImages(data.getData(), BuyOrderList.this);
+                page++;
+            } else {
+                if (data.getData() != null) {
+                    page++;
+                    adapter.addData(data.getData());
+                } else {
+                    loadMoreFooterView.setStatus(LoadMoreFooterView.Status.THE_END);
+                }
+
+            }
 
         }
 

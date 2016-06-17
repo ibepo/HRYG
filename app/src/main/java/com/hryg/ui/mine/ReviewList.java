@@ -1,26 +1,19 @@
 package com.hryg.ui.mine;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.TextView;
 
-import com.hryg.adapter.AddressListAdapter;
+import com.hryg.adapter.ReviewListAdapter;
 import com.hryg.base.BaseActivity;
 import com.hryg.base.PathConfig;
 import com.hryg.base.ToastUtils;
-import com.hryg.model.AddressListData;
+import com.hryg.model.ReviewListBean;
 import com.hryg.network.Network;
-import com.hryg.ui.address.AddressAdd;
 import com.kefanbufan.fengtimo.R;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -30,39 +23,31 @@ public class ReviewList extends BaseActivity {
 
     @Bind(R.id.gridRv)
     RecyclerView gridRv;
-
-
-    AddressListAdapter adapter = new AddressListAdapter();
-    @Bind(R.id.tvAdd)
-    TextView tvAdd;
+    ReviewListAdapter adapter = new ReviewListAdapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.address_list);
+        setContentView(R.layout.review_list);
         ButterKnife.bind(this);
-        getTopBar("收货地址");
-
+        getTopBar("商家审核");
         gridRv.setAdapter(adapter);
         gridRv.setLayoutManager(new LinearLayoutManager(ReviewList.this));
-        getData();
 
     }
 
 
     public void getData() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("user_id", PathConfig.user_id);
 
 
-        Network.getAddressApi().getAlllist(map)
+        Network.getMineApi().getReviewList(PathConfig.user_id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
 
 
-    Observer<AddressListData> observer = new Observer<AddressListData>() {
+    Observer<ReviewListBean> observer = new Observer<ReviewListBean>() {
         @Override
         public void onCompleted() {
         }
@@ -73,7 +58,7 @@ public class ReviewList extends BaseActivity {
         }
 
         @Override
-        public void onNext(AddressListData data) {
+        public void onNext(ReviewListBean data) {
             adapter.setImages(data.getData(), ReviewList.this);
 
         }
@@ -87,10 +72,4 @@ public class ReviewList extends BaseActivity {
 
     }
 
-    @OnClick(R.id.tvAdd)
-    public void onClick() {
-
-        Intent intent2 = new Intent(this, AddressAdd.class);
-        this.startActivity(intent2);
-    }
 }

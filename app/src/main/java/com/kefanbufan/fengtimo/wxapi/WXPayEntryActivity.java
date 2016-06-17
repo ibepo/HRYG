@@ -6,30 +6,25 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
+import com.hryg.base.ToastUtils;
 import com.tencent.mm.sdk.modelbase.BaseReq;
 import com.tencent.mm.sdk.modelbase.BaseResp;
-import com.tencent.mm.sdk.modelpay.PayResp;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
-import com.yaodu.drug.Constants;
 
-/**
- * 微信支付回调
- *
- * @author BoBoMEe
- */
 
 public class WXPayEntryActivity extends AppCompatActivity implements IWXAPIEventHandler {
     LocalBroadcastManager mLocalBroadcastManager;
 
     private IWXAPI api;
+    String APP_ID = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        api = WXAPIFactory.createWXAPI(this, Constants.APP_ID);
+        api = WXAPIFactory.createWXAPI(this, APP_ID);
         api.handleIntent(getIntent(), this);
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
     }
@@ -54,9 +49,11 @@ public class WXPayEntryActivity extends AppCompatActivity implements IWXAPIEvent
             case BaseResp.ErrCode.ERR_OK:
 //                result = "发送成功";
             {
-                Intent intent = new Intent(Constants.payAction);
-                intent.putExtra(Constants.prepayId, ((PayResp) baseResp).prepayId);
-                mLocalBroadcastManager.sendBroadcast(intent);
+
+                ToastUtils.showSuperToastAlertGreen(this, "jj");
+//                Intent intent = new Intent(Constants.payAction);
+//                intent.putExtra(Constants.prepayId, ((PayResp) baseResp).prepayId);
+//                mLocalBroadcastManager.sendBroadcast(intent);
             }
             break;
             case BaseResp.ErrCode.ERR_USER_CANCEL:

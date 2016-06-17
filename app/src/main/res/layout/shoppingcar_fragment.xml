@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gallery"
@@ -20,6 +21,16 @@
             android:textSize="20dp" />
 
 
+        <ImageView
+            android:id="@+id/ivMessage"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/b6i" />
+
+
     </RelativeLayout>
 
 
@@ -27,28 +38,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_centerInParent="true"
-                android:id="@+id/tvLoading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="加载中"
-                android:textColor="@color/bunker"
-                android:textSize="20sp" />
-
-
-        </RelativeLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/gridRv"
+        <com.aspsine.irecyclerview.IRecyclerView
+            android:id="@+id/iRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp" />
+            app:loadMoreEnabled="true"
+            app:loadMoreFooterLayout="@layout/layout_irecyclerview_load_more_footer"
+            app:refreshEnabled="true"
+            app:refreshHeaderLayout="@layout/layout_irecyclerview_refresh_header" />
 
 
         <RelativeLayout
@@ -59,8 +56,8 @@
 
             <ImageView
                 android:id="@+id/ivNoData"
-                android:layout_width="300dp"
-                android:layout_height="50dp"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="180dp"
                 android:background="@drawable/noshopping" />
@@ -71,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/ivNoData"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:text="您的购物车空空如也,快去装满它!" />
 
 

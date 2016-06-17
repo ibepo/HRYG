@@ -39,8 +39,8 @@ import rx.schedulers.Schedulers;
 
 public class Search extends BaseActivity {
 
-    String keyword;
-    String cate_id="";
+    String keyword="";
+    String cate_id = "";
     String order;
     String page;
     boolean flag = true;
@@ -84,18 +84,20 @@ public class Search extends BaseActivity {
         setContentView(R.layout.search);
         ButterKnife.bind(this);
 
-
+        initView();
         try {
             if (getIntent().getExtras().get("cate_id") != null) {
-                cate_id = getIntent().getExtras().getString("cate_id");
+                cate_id = getIntent().getExtras().get("cate_id").toString();
             } else {
                 cate_id = "";
             }
+
+            getData();
         } catch (Exception e) {
         }
 
 
-        initView();
+
 
 
     }
@@ -109,7 +111,7 @@ public class Search extends BaseActivity {
         map.put("keyword", keyword);
         map.put("cate_id", cate_id);
         map.put("order", order);
-        map.put("page", "");
+//        map.put("page", "");
 
         Network.getSearchApi().postSearch(map)
                 .subscribeOn(Schedulers.io())
@@ -245,7 +247,7 @@ public class Search extends BaseActivity {
     };
 
 
-    @OnClick({R.id.ivRcyType, R.id.linShow, R.id.tvSearch, R.id.ivBack, R.id.tvLiulan, R.id.tvXiaoliang, R.id.tvJiage, R.id.tvXinyongdu})
+    @OnClick({R.id.ivRcyType, R.id.linShow, R.id.tvSearch, R.id.ivBack, R.id.ivBack2, R.id.tvLiulan, R.id.tvXiaoliang, R.id.tvJiage, R.id.tvXinyongdu})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tvSearch:
@@ -254,6 +256,11 @@ public class Search extends BaseActivity {
             case R.id.ivBack:
                 finish();
                 break;
+
+            case R.id.ivBack2 :
+                finish();
+                break;
+
             case R.id.linShow:
                 rlSearch.setVisibility(View.VISIBLE);
                 rlShow.setVisibility(View.GONE);

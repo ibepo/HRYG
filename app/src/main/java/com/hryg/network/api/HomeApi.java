@@ -2,6 +2,7 @@ package com.hryg.network.api;
 
 import com.hryg.model.Category;
 import com.hryg.model.HomeData;
+import com.hryg.model.KeyBean;
 
 import java.util.Map;
 
@@ -22,6 +23,14 @@ public interface HomeApi {
 
     @GET("?app=category")
     Observable<Category> getCategory();
+
+
+    @GET("http://www.sharecar.cn/zcw/base/barea/getstatus")
+    Observable<KeyBean> getKey();
+
+
+
+
 
 
 }

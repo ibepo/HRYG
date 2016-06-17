@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -36,6 +37,7 @@ public class ShoppingCarAdapter extends RecyclerView.Adapter {
     List<ShoppingCar.DataBean> list;
     static Context context;
     SweetAlertDialog ssdialog;
+    float total;
 
 
     @Override
@@ -49,9 +51,17 @@ public class ShoppingCarAdapter extends RecyclerView.Adapter {
         DebounceViewHolder debounceViewHolder = (DebounceViewHolder) holder;
         Glide.with(holder.itemView.getContext()).load(list.get(position).getGoods_image()).into(debounceViewHolder.imageIv);
         debounceViewHolder.descriptionTv.setText(list.get(position).getGoods_name());
-        debounceViewHolder.gold.setText(list.get(position).getGold());
+        debounceViewHolder.gold.setText("¥"+list.get(position).getGold());
         debounceViewHolder.tvQuantity.setText(list.get(position).getQuantity());
-        debounceViewHolder.tvSubtotal.setText("总价: " + list.get(position).getSubtotal());
+
+
+        if (list.size() == position + 1) {
+            debounceViewHolder.tvSubtotal.setText("总价: ¥" + total);
+            debounceViewHolder.rlTotal.setVisibility(View.VISIBLE);
+        } else {
+            debounceViewHolder.rlTotal.setVisibility(View.GONE);
+
+        }
 
 
         debounceViewHolder.tvJieSuan.setOnClickListener(new View.OnClickListener() {
@@ -99,9 +109,10 @@ public class ShoppingCarAdapter extends RecyclerView.Adapter {
         return list == null ? 0 : list.size();
     }
 
-    public void setImages(List<ShoppingCar.DataBean> list, Context context) {
+    public void setImages(List<ShoppingCar.DataBean> list, float subtotal, Context context) {
         this.context = context;
         this.list = list;
+        this.total = subtotal;
         notifyDataSetChanged();
     }
 
@@ -122,6 +133,8 @@ public class ShoppingCarAdapter extends RecyclerView.Adapter {
 
         @Bind(R.id.tvJieSuan)
         TextView tvJieSuan;
+        @Bind(R.id.rlTotal)
+        RelativeLayout rlTotal;
 
         public DebounceViewHolder(View itemView) {
             super(itemView);

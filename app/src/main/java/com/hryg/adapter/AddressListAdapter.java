@@ -3,14 +3,17 @@
 package com.hryg.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hryg.model.AddressListData;
+import com.hryg.ui.address.AddressModify;
 import com.kefanbufan.fengtimo.R;
 
 import java.util.List;
@@ -36,6 +39,15 @@ public class AddressListAdapter extends RecyclerView.Adapter {
         viewHolder.tvName.setText(list.get(position).getConsignee());
         viewHolder.tvPhone.setText(list.get(position).getPhone_tel());
         viewHolder.tvAddress.setText(list.get(position).getRegion_name() + list.get(position).getAddress());
+
+        viewHolder.linMofify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent2 = new Intent(context, AddressModify.class);
+                intent2.putExtra("addr_id", list.get(position).getAddr_id());
+                context.startActivity(intent2);
+            }
+        });
 
         if (Integer.parseInt(list.get(position).getIf_show()) == 1) {
             viewHolder.imageIv.setVisibility(View.VISIBLE);
@@ -66,6 +78,8 @@ public class AddressListAdapter extends RecyclerView.Adapter {
         TextView tvPhone;
         @Bind(R.id.tvAddress)
         TextView tvAddress;
+        @Bind(R.id.linMofify)
+        LinearLayout linMofify;
 
 
         public DebounceViewHolder(View itemView) {

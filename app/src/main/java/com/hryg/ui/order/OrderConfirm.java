@@ -1,8 +1,8 @@
 package com.hryg.ui.order;
 
 import android.content.Intent;
-import android.location.Address;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -17,6 +17,7 @@ import com.hryg.base.ToastUtils;
 import com.hryg.model.OrderConfirmData;
 import com.hryg.model.PostOrderData;
 import com.hryg.network.Network;
+import com.hryg.ui.address.AddressList;
 import com.jakewharton.rxbinding.widget.RxRadioGroup;
 import com.kefanbufan.fengtimo.R;
 
@@ -120,31 +121,10 @@ public class OrderConfirm extends BaseActivity {
         map.put("address", orderConfirmData.getAddress().get(0).getAddress());
         map.put("phone_tel", orderConfirmData.getAddress().get(0).getPhone_tel());
         map.put("logist_fees", logist_fees);
+        Log.e("====", map.toString());
 
 
-//        MediaType textType = MediaType.parse("text/plain");
-//        RequestBody user_id = RequestBody.create(textType, PathConfig.user_id);
-//        RequestBody address_options = RequestBody.create(textType,orderConfirmData.getAddress().get(0).getAddr_id());
-//        RequestBody consignee = RequestBody.create(textType, orderConfirmData.getAddress().get(0).getConsignee());
-//        RequestBody region_id = RequestBody.create(textType,orderConfirmData.getAddress().get(0).getRegion_id());
-//        RequestBody region_name = RequestBody.create(textType, orderConfirmData.getAddress().get(0).getRegion_name());
-//        RequestBody address = RequestBody.create(textType, orderConfirmData.getAddress().get(0).getAddress());
-//        RequestBody phone_tel = RequestBody.create(textType,  orderConfirmData.getAddress().get(0).getPhone_tel());
-//        RequestBody logist_fees = RequestBody.create(textType, "express:250");
-//
-        Map<String, Object> map2 = new HashMap<>();
-
-        map2.put("user_id", "20446");
-        map2.put("address_options", "3645");
-        map2.put("consignee", "王");
-        map2.put("region_id", "15034");
-        map2.put("region_name", "黑龙江省哈尔滨市道里区");
-        map2.put("address", "2222");
-        map2.put("phone_tel", "15004043523");
-        map2.put("logist_fees", "express:29");
-
-
-        Network.getOrderApi().postOrder(map2)
+        Network.getOrderApi().postOrder(map)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer2);
@@ -158,6 +138,7 @@ public class OrderConfirm extends BaseActivity {
 
         @Override
         public void onError(Throwable e) {
+            dimissDialog();
             ToastUtils.showSuperToastAlertGreen(getApplicationContext(), "连接服务器失败");
         }
 
@@ -165,7 +146,10 @@ public class OrderConfirm extends BaseActivity {
         public void onNext(PostOrderData data) {
             dimissDialog();
             if (data.getCode() == 1) {
+                finish();
                 Intent intent2 = new Intent(OrderConfirm.this, PayType.class);
+                intent2.putExtra("order_id", data.getData().getOrder_id());
+                intent2.putExtra("store_id", data.getData().getStore_id());
                 OrderConfirm.this.startActivity(intent2);
             } else {
                 ToastUtils.showSuperToastAlert(OrderConfirm.this, data.getDescription());
@@ -202,7 +186,7 @@ public class OrderConfirm extends BaseActivity {
 
             tvName.setText(data.getAddress().get(0).getConsignee());
             tvPhone.setText(data.getAddress().get(0).getPhone_tel());
-            tvAddress.setText(data.getAddress().get(0).getAddress());
+            tvAddress.setText(data.getAddress().get(0).getRegion_name() + data.getAddress().get(0).getAddress());
             tvSubtotal.setText("共" + data.getData().size() + "件");
 
             tvExpressName.setText(data.getShipping().get(0).getName());
@@ -236,7 +220,7 @@ public class OrderConfirm extends BaseActivity {
                 postOrder();
                 break;
             case R.id.rlAddress:
-                Intent intent2 = new Intent(this, Address.class);
+                Intent intent2 = new Intent(this, AddressList.class);
                 this.startActivity(intent2);
                 break;
             case R.id.rlOrderList:

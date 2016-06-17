@@ -1,13 +1,11 @@
 package com.hryg.ui.buyorder;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
 import com.hryg.base.BaseActivity;
 import com.hryg.base.PathConfig;
 import com.hryg.base.ToastUtils;
@@ -15,6 +13,7 @@ import com.hryg.model.CommentInfo;
 import com.hryg.model.ResultBean4Rep;
 import com.hryg.network.Network;
 import com.jakewharton.rxbinding.view.RxView;
+import com.jakewharton.rxbinding.widget.RxTextView;
 import com.kefanbufan.fengtimo.R;
 
 import java.util.HashMap;
@@ -22,7 +21,6 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -52,7 +50,9 @@ public class SubmitComment2 extends BaseActivity {
     @Bind(R.id.radioButton3)
     ImageView radioButton3;
 
-    String user_id, order_id;
+    String user_id, order_id, rec_id, evaluation, comment;
+    int index;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +60,17 @@ public class SubmitComment2 extends BaseActivity {
         setContentView(R.layout.submit_assess);
         ButterKnife.bind(this);
         getTopBar("发表评论");
-
+        evaluation = "3";
         user_id = PathConfig.user_id;
-//        order_id = getIntent().getExtras().get("order_id").toString();
-        order_id = "22437";
+        order_id = getIntent().getExtras().get("order_id").toString();
+        index = Integer.parseInt(getIntent().getExtras().get("index").toString());
+
 
         RxView.clicks(radioButton1).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
                 resetRB();
+                evaluation = "3";
                 radioButton1.setBackground(getResources().getDrawable(R.drawable.gc_p));
             }
         });
@@ -77,6 +79,7 @@ public class SubmitComment2 extends BaseActivity {
             @Override
             public void call(Void aVoid) {
                 resetRB();
+                evaluation = "2";
                 radioButton2.setBackground(getResources().getDrawable(R.drawable.mc_p));
             }
         });
@@ -85,10 +88,22 @@ public class SubmitComment2 extends BaseActivity {
             @Override
             public void call(Void aVoid) {
                 resetRB();
+                evaluation = "1";
                 radioButton3.setBackground(getResources().getDrawable(R.drawable.bc_p));
             }
         });
-
+        RxTextView.textChanges(etComment).subscribe(new Action1<CharSequence>() {
+            @Override
+            public void call(CharSequence charSequence) {
+                comment = charSequence.toString();
+            }
+        });
+        RxView.clicks(tvSubmit).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                submitComment();
+            }
+        });
         getData();
     }
 
@@ -125,33 +140,30 @@ public class SubmitComment2 extends BaseActivity {
         @Override
         public void onNext(CommentInfo data) {
             dimissDialog();
-            if (data.getGoods().size() > 1) {
-                Gson gson = new Gson();
-                String josn = gson.toJson(data.getGoods());
-                Intent intent2 = new Intent(SubmitComment2.this, SubCommentGoodsList.class);
-                intent2.putExtra("data", josn);
-                intent2.putExtra("order_id", order_id);
-                SubmitComment2.this.startActivity(intent2);
-                finish();
-            }
-
-
-            tvGoodsName.setText(data.getGoods().get(0).getGoods_name());
-            tvNum.setText("数量: " + data.getGoods().get(0).getQuantity());
-            tvGold.setText("¥" + data.getGoods().get(0).getGold());
-            Glide.with(SubmitComment2.this).load(data.getGoods().get(0).getGoods_image()).into(ivGoods);
-
+            tvGoodsName.setText(data.getGoods().get(index).getGoods_name());
+            tvNum.setText("数量: " + data.getGoods().get(index).getQuantity());
+            tvGold.setText("¥" + data.getGoods().get(index).getGold());
+            Glide.with(SubmitComment2.this).load(data.getGoods().get(index).getGoods_image()).into(ivGoods);
+            rec_id = data.getGoods().get(index).getRec_id();
         }
 
     };
 
 
     public void submitComment() {
+
+        if (comment.contains("\"\"") || comment.contains("\'\'")) {
+            ToastUtils.showSuperToastAlert(getApplicationContext(), "评论中不能包含双引号或者单引号!");
+            return;
+        }
+
         showDialog();
         Map<String, Object> map = new HashMap<>();
-        map.put("user_name", PathConfig.user_id);
+        map.put("user_id", PathConfig.user_id);
         map.put("order_id", order_id);
-
+        map.put("rec_id", rec_id);
+        map.put("evaluation", evaluation);
+        map.put("comment", comment);
         Network.getOrderApi().submitComment(map).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer2);
@@ -173,14 +185,12 @@ public class SubmitComment2 extends BaseActivity {
         @Override
         public void onNext(ResultBean4Rep data) {
             dimissDialog();
-
+            ToastUtils.showSuperToastAlertGreen(getApplicationContext(), data.getDescription());
+            finish();
 
         }
 
     };
 
 
-    @OnClick(R.id.tvSubmit)
-    public void onClick() {
-    }
 }

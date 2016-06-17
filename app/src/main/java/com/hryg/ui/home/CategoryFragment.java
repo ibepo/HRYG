@@ -17,7 +17,6 @@ import com.hryg.adapter.CategorySmallTypeAdapter;
 import com.hryg.adapter.SearchGridListAdapter;
 import com.hryg.adapter.SearchListListAdapter;
 import com.hryg.base.BaseFragment;
-import com.hryg.base.ToastUtils;
 import com.hryg.model.Category;
 import com.hryg.network.Network;
 import com.hryg.ui.search.Search;
@@ -73,7 +72,7 @@ public class CategoryFragment extends BaseFragment {
 
         @Override
         public void onError(Throwable e) {
-            ToastUtils.showSuperToastAlertGreen(getContext(), "连接服务器失败");
+//            ToastUtils.showSuperToastAlertGreen(getContext(), "连接服务器失败");
         }
 
         @Override
