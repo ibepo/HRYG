@@ -30,7 +30,7 @@ public class OrderList extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.order_list);
+        setContentView(R.layout.good_list);
         ButterKnife.bind(this);
         getTopBar("商品清单");
 
@@ -61,7 +61,6 @@ public class OrderList extends BaseActivity {
 
         @Override
         public void onNext(OrderListData data) {
-//            ToastUtils.showSuperToastAlertGreen(getApplicationContext(), data.getDescription());
             adapter.setImages(data.getData(), OrderList.this);
 
         }

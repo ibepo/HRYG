@@ -159,6 +159,7 @@ public class PayType extends BaseActivity {
                 Intent intent = new Intent(PayType.this, UnionPay.class);
                 intent.putExtra("order_id", order_id);
                 PayType.this.startActivity(intent);
+                finish();
                 break;
 
         }

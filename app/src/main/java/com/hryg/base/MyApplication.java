@@ -12,7 +12,8 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-
+        MyCrashHandler handler = MyCrashHandler.getInstance();
+        Thread.setDefaultUncaughtExceptionHandler(handler);
 
     }
 }

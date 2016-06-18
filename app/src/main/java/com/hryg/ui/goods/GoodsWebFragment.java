@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -77,6 +78,15 @@ public class GoodsWebFragment extends BaseFragment {
         ButterKnife.bind(this, view);
         id = GoodDetails.id;
         webview.getSettings().setJavaScriptEnabled(true);
+        webview.setWebViewClient(new WebViewClient(){
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                // TODO Auto-generated method stub
+                view.loadUrl(url);
+                return true;
+            }
+        });
         webview.loadUrl("http://www.hr1g.net/index_ios.php?app=goods&act=index&id=" + id);
         initView();
         getData();

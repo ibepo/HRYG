@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.hryg.base.BaseFragment;
 import com.hryg.base.PathConfig;
+import com.hryg.base.SharedPreferencesUtils;
 import com.hryg.base.ToastUtils;
 import com.hryg.model.MineData;
 import com.hryg.network.Network;
@@ -22,6 +23,7 @@ import com.hryg.ui.buyorder.ToCommentOrderList;
 import com.hryg.ui.buyorder.ToPayOrderList;
 import com.hryg.ui.buyorder.ToReceiptOrderList;
 import com.hryg.ui.buyorder.ToSendOrderList;
+import com.hryg.ui.login.Login;
 import com.hryg.ui.mine.ApplyBusiness;
 import com.hryg.ui.mine.DownLineList;
 import com.hryg.ui.mine.PersonalInfo;
@@ -36,6 +38,7 @@ import java.util.Map;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import de.hdodenhof.circleimageview.CircleImageView;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -79,6 +82,8 @@ public class MineFragment extends BaseFragment {
     CircleImageView ivTouxiang;
     @Bind(R.id.linID)
     LinearLayout linID;
+    @Bind(R.id.linSetting)
+    LinearLayout linSetting;
 
 
     @Override
@@ -153,7 +158,7 @@ public class MineFragment extends BaseFragment {
         ButterKnife.unbind(this);
     }
 
-    @OnClick({R.id.ivTouxiang, R.id.linID, R.id.linReview, R.id.linPic, R.id.linRecharge, R.id.linPersonalInfo, R.id.linApplyBusiness, R.id.linAddress, R.id.linAllList, R.id.linToPay, R.id.linToSend, R.id.linTOReceipt, R.id.linToComment, R.id.linToChange})
+    @OnClick({R.id.ivTouxiang, R.id.linSetting, R.id.linID, R.id.linReview, R.id.linPic, R.id.linRecharge, R.id.linPersonalInfo, R.id.linApplyBusiness, R.id.linAddress, R.id.linAllList, R.id.linToPay, R.id.linToSend, R.id.linTOReceipt, R.id.linToComment, R.id.linToChange})
     public void onClick(View view) {
         switch (view.getId()) {
 
@@ -220,6 +225,30 @@ public class MineFragment extends BaseFragment {
                 Intent intent13 = new Intent(getActivity(), DownLineList.class);
                 getActivity().startActivity(intent13);
                 break;
+
+
+            case R.id.linSetting:
+                new SweetAlertDialog(view.getContext(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("退出登录?")
+                        .showContentText(false)
+                        .setConfirmText("是的")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                SharedPreferencesUtils.setParam(getContext(), "user_id", "");
+                                Intent intent14 = new Intent(getActivity(), Login.class);
+                                getActivity().startActivity(intent14);
+                                getActivity().finish();
+
+                            }
+                        })
+                        .setCancelText("取消")
+                        .setCancelClickListener(null)
+                        .show();
+
+
+                break;
+
 
         }
     }
